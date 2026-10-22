@@ -1,0 +1,255 @@
+{
+  "_comment": "Single source for every SDK's resource classes. Run `python3 tools/generate.py` after editing. kind: get = path params only, query = optional query string, list = optional query string and a paginated result, body = JSON body, delete = no body.",
+  "resources": [
+    {
+      "name": "customers",
+      "doc": "Your customers: the people and businesses you onboard.",
+      "methods": [
+        {"name": "list", "http": "GET", "path": "/customer", "kind": "list", "doc": "List customers."},
+        {"name": "create", "http": "POST", "path": "/customer", "kind": "body", "doc": "Create a customer."},
+        {"name": "retrieve", "http": "GET", "path": "/customer/{customerId}", "kind": "query", "doc": "Get a customer, including its endorsements."},
+        {"name": "update", "http": "PUT", "path": "/customer/{customerId}", "kind": "body", "doc": "Update a customer."},
+        {"name": "delete", "http": "DELETE", "path": "/customer/{customerId}", "kind": "delete", "doc": "Delete a customer."}
+      ]
+    },
+    {
+      "name": "kyc",
+      "doc": "Submit and update customer KYC (individuals) and KYB (businesses).",
+      "methods": [
+        {"name": "submitIndividual", "http": "POST", "path": "/individual-kyc/submit", "kind": "body", "doc": "Submit individual KYC."},
+        {"name": "submitBusiness", "http": "POST", "path": "/business-kyc/submit", "kind": "body", "doc": "Submit business KYB."},
+        {"name": "updateIndividual", "http": "PATCH", "path": "/individual-kyc/{customerId}", "kind": "body", "doc": "Partially update an individual KYC submission."},
+        {"name": "updateBusiness", "http": "PATCH", "path": "/business-kyc/{customerId}", "kind": "body", "doc": "Partially update a business KYB submission."},
+        {"name": "updateSubmission", "http": "PUT", "path": "/customer/kyc/update", "kind": "body", "doc": "Update a KYC submission."},
+        {"name": "resubmitEndorsement", "http": "POST", "path": "/customer/kyc/resubmit/{customerId}/{endorsement}", "kind": "body", "doc": "Request or resubmit an endorsement (a service such as base, sepa or card_checkout) for a customer."}
+      ]
+    },
+    {
+      "name": "lookups",
+      "doc": "Reference lists used to build KYC and KYB forms.",
+      "methods": [
+        {"name": "countries", "http": "GET", "path": "/countries", "kind": "query", "doc": "List countries."},
+        {"name": "subdivisions", "http": "GET", "path": "/subdivisions/{countryCode}", "kind": "query", "doc": "List a country's states or provinces."},
+        {"name": "postalCodeFormat", "http": "GET", "path": "/postal-codes/{countryCode}", "kind": "query", "doc": "Get a country's postal code format."},
+        {"name": "identificationTypes", "http": "GET", "path": "/identification-types/{countryCode}", "kind": "query", "doc": "List accepted ID document types for a country."},
+        {"name": "occupations", "http": "GET", "path": "/occupations", "kind": "query", "doc": "List occupations."},
+        {"name": "businessIndustries", "http": "GET", "path": "/business-industries", "kind": "query", "doc": "List business industries."},
+        {"name": "individualAccountPurposes", "http": "GET", "path": "/individual-kyc/account-purposes", "kind": "query", "doc": "List account purposes for individuals."},
+        {"name": "individualSourceOfFunds", "http": "GET", "path": "/individual-kyc/source-of-funds", "kind": "query", "doc": "List sources of funds for individuals."},
+        {"name": "businessAccountPurposes", "http": "GET", "path": "/business-kyc/account-purposes", "kind": "query", "doc": "List account purposes for businesses."},
+        {"name": "businessSourceOfFunds", "http": "GET", "path": "/business-kyc/source-of-funds", "kind": "query", "doc": "List sources of funds for businesses."},
+        {"name": "expectedMonthlyPayments", "http": "GET", "path": "/individual-kyc/expected-monthly-payments-usd", "kind": "query", "doc": "List expected monthly payment ranges (USD)."},
+        {"name": "transactionCurrencies", "http": "GET", "path": "/transaction-currencies", "kind": "query", "doc": "List transaction currencies."},
+        {"name": "transactionCountries", "http": "GET", "path": "/transaction-countries", "kind": "query", "doc": "List transaction countries."},
+        {"name": "currencies", "http": "GET", "path": "/currencies/all", "kind": "query", "doc": "List all supported currencies."}
+      ]
+    },
+    {
+      "name": "paymentMethods",
+      "doc": "Discover payin (collection) and payout methods.",
+      "methods": [
+        {"name": "payin", "http": "GET", "path": "/payment-methods/payin", "kind": "query", "doc": "List payin methods. Pass country (ISO 3166-1 alpha-3) and currency. Each method's id is the gateway for deposits.create."},
+        {"name": "payinCountries", "http": "GET", "path": "/payment-methods/payin/countries", "kind": "query", "doc": "List countries you can collect payments in."},
+        {"name": "payinCurrencies", "http": "GET", "path": "/payment-methods/payin/currency", "kind": "query", "doc": "List payin currencies for a country. Pass country (alpha-3)."},
+        {"name": "payout", "http": "GET", "path": "/payment-methods/payout", "kind": "query", "doc": "List payout methods."},
+        {"name": "payoutCountries", "http": "GET", "path": "/payment-methods/payout/countries", "kind": "query", "doc": "List countries you can pay out to."},
+        {"name": "payoutForm", "http": "GET", "path": "/beneficiary/form/show/{paymentMethodId}", "kind": "query", "doc": "Get the fields a payout method needs for a beneficiary."}
+      ]
+    },
+    {
+      "name": "rates",
+      "doc": "Quotes, market rates and your fee schedule.",
+      "methods": [
+        {"name": "quote", "http": "POST", "path": "/exchange-rate", "kind": "body", "doc": "Create a quote. With method_id and method_type it locks the rate for 5 minutes and returns a quote_id."},
+        {"name": "market", "http": "GET", "path": "/exchange-rates", "kind": "query", "doc": "Live indicative market rates for display."},
+        {"name": "fees", "http": "GET", "path": "/fees", "kind": "query", "doc": "Your fees for every payin and payout method."}
+      ]
+    },
+    {
+      "name": "deposits",
+      "doc": "Payins: collect money through local payment methods and cards.",
+      "methods": [
+        {"name": "create", "http": "POST", "path": "/wallet/deposits/new", "kind": "body", "doc": "Create a deposit. Returns deposit_url, the hosted page to send your payer to."},
+        {"name": "list", "http": "GET", "path": "/wallet/deposits", "kind": "list", "doc": "List deposits. Filter by gateway, currency, customer_id, start_date and end_date."},
+        {"name": "retrieve", "http": "GET", "path": "/wallet/deposits/{depositId}", "kind": "get", "doc": "Get one deposit by its id or deposit_id. Use it to confirm status before you fulfil an order."}
+      ]
+    },
+    {
+      "name": "cardCheckout",
+      "doc": "Card Checkout: hosted card payments for your customers' sales. Your account needs Card Checkout access.",
+      "methods": [
+        {"name": "account", "http": "GET", "path": "/card-checkout/account", "kind": "get", "doc": "Your Card Checkout access, pricing and balance."},
+        {"name": "requestAccess", "http": "POST", "path": "/card-checkout/account/request-access", "kind": "body", "doc": "Request Card Checkout access. Optional note."},
+        {"name": "customer", "http": "GET", "path": "/card-checkout/customers/{customerId}", "kind": "get", "doc": "A customer's card_checkout endorsement."},
+        {"name": "submitEndorsement", "http": "POST", "path": "/card-checkout/customers/{customerId}/endorsement", "kind": "body", "doc": "Submit a customer's card_checkout endorsement. Returns an onboarding_url."},
+        {"name": "onboardingLink", "http": "POST", "path": "/card-checkout/customers/{customerId}/onboarding", "kind": "body", "doc": "Create a fresh onboarding link. Optional return_url and refresh_url."},
+        {"name": "verification", "http": "GET", "path": "/card-checkout/customers/{customerId}/verification", "kind": "get", "doc": "Get the verification form, prefilled from the customer's KYB."},
+        {"name": "submitVerification", "http": "POST", "path": "/card-checkout/customers/{customerId}/verification", "kind": "body", "doc": "Submit business verification details."},
+        {"name": "createOrder", "http": "POST", "path": "/card-checkout/orders", "kind": "body", "doc": "Create a checkout order. Send the buyer to the returned checkout_url."},
+        {"name": "listOrders", "http": "GET", "path": "/card-checkout/orders", "kind": "list", "doc": "List orders. Filter by status, customer_id and reference."},
+        {"name": "retrieveOrder", "http": "GET", "path": "/card-checkout/orders/{orderId}", "kind": "get", "doc": "Get an order. Act on its status, not on the buyer's redirect."}
+      ]
+    },
+    {
+      "name": "virtualAccounts",
+      "doc": "Virtual bank accounts for your customers.",
+      "methods": [
+        {"name": "create", "http": "POST", "path": "/business/virtual-account/create", "kind": "body", "doc": "Create a virtual account for a customer and currency."},
+        {"name": "list", "http": "GET", "path": "/business/virtual-account", "kind": "list", "doc": "List virtual accounts."},
+        {"name": "retrieve", "http": "GET", "path": "/business/virtual-account/show/{accountId}", "kind": "get", "doc": "Get a virtual account."},
+        {"name": "delete", "http": "DELETE", "path": "/business/virtual-account/delete-virtual-account/{accountId}", "kind": "delete", "doc": "Delete a virtual account."},
+        {"name": "history", "http": "GET", "path": "/business/virtual-account/history/{accountNumber}", "kind": "list", "doc": "Transactions into one virtual account."},
+        {"name": "histories", "http": "GET", "path": "/business/virtual-account/histories", "kind": "list", "doc": "Transactions into all your virtual accounts."},
+        {"name": "forCustomer", "http": "GET", "path": "/business/virtual-account/customer/accounts/{customerId}", "kind": "query", "doc": "A customer's virtual accounts."},
+        {"name": "currencies", "http": "GET", "path": "/business/virtual-account/currencies-and-endorsements", "kind": "query", "doc": "Currencies you can issue and the endorsement each needs."}
+      ]
+    },
+    {
+      "name": "wallets",
+      "doc": "Your balances.",
+      "methods": [
+        {"name": "balance", "http": "GET", "path": "/wallet/balance", "kind": "query", "doc": "Balances for every wallet currency."},
+        {"name": "totalBalance", "http": "GET", "path": "/wallet/balance/total", "kind": "query", "doc": "Total balance in USD."},
+        {"name": "create", "http": "POST", "path": "/wallet/create", "kind": "body", "doc": "Add a wallet currency."},
+        {"name": "payouts", "http": "GET", "path": "/wallet/payouts", "kind": "list", "doc": "Payouts from your wallets."}
+      ]
+    },
+    {
+      "name": "beneficiaries",
+      "doc": "Saved payout destinations.",
+      "methods": [
+        {"name": "list", "http": "GET", "path": "/beneficiaries/payment-methods/all", "kind": "list", "doc": "List beneficiaries (saved payment methods)."},
+        {"name": "create", "http": "POST", "path": "/beneficiaries/payment-methods", "kind": "body", "doc": "Add a beneficiary with gateway_id, payment_data, currency and nickname."},
+        {"name": "retrieve", "http": "POST", "path": "/beneficiaries/payment-methods/{beneficiaryId}", "kind": "body", "doc": "Get a beneficiary."},
+        {"name": "update", "http": "PUT", "path": "/beneficiaries/payment-methods/update/{beneficiaryId}", "kind": "body", "doc": "Update a beneficiary."},
+        {"name": "delete", "http": "DELETE", "path": "/beneficiaries/payment-methods/delete/{beneficiaryId}", "kind": "delete", "doc": "Delete a beneficiary."},
+        {"name": "archive", "http": "PUT", "path": "/beneficiaries/{beneficiaryId}/archive", "kind": "body", "doc": "Archive a beneficiary record."},
+        {"name": "unarchive", "http": "PUT", "path": "/beneficiaries/{beneficiaryId}/unarchive", "kind": "body", "doc": "Unarchive a beneficiary record."}
+      ]
+    },
+    {
+      "name": "payouts",
+      "doc": "Send money out of your wallets.",
+      "methods": [
+        {"name": "create", "http": "POST", "path": "/wallet/payout", "kind": "body", "doc": "Pay out from a wallet to a beneficiary."},
+        {"name": "createSimple", "http": "POST", "path": "/payout/simple", "kind": "body", "doc": "Single payout."},
+        {"name": "list", "http": "GET", "path": "/payout/get", "kind": "list", "doc": "List payouts."},
+        {"name": "retrieve", "http": "GET", "path": "/payout/fetch/{payoutId}", "kind": "get", "doc": "Get a payout."}
+      ]
+    },
+    {
+      "name": "sendMoney",
+      "doc": "Quote and send transfers in one flow.",
+      "methods": [
+        {"name": "quote", "http": "POST", "path": "/sendmoney/quote", "kind": "body", "doc": "Quote a transfer."},
+        {"name": "send", "http": "POST", "path": "/sendmoney", "kind": "body", "doc": "Send a quoted transfer."},
+        {"name": "addPurpose", "http": "POST", "path": "/sendmoney/purpose", "kind": "body", "doc": "Add a transfer purpose (quote_id, transfer_purpose)."}
+      ]
+    },
+    {
+      "name": "swaps",
+      "doc": "Move balance between your own wallet currencies.",
+      "methods": [
+        {"name": "pairs", "http": "GET", "path": "/wallet/swap/pairs", "kind": "query", "doc": "Currency pairs you can swap."},
+        {"name": "quote", "http": "POST", "path": "/wallet/swap/quote", "kind": "body", "doc": "Quote a swap."},
+        {"name": "create", "http": "POST", "path": "/wallet/swap", "kind": "body", "doc": "Run a swap."},
+        {"name": "list", "http": "GET", "path": "/wallet/swap", "kind": "list", "doc": "List swaps."},
+        {"name": "retrieve", "http": "GET", "path": "/wallet/swap/{reference}", "kind": "get", "doc": "Get a swap."}
+      ]
+    },
+    {
+      "name": "transactions",
+      "doc": "Your transaction history.",
+      "methods": [
+        {"name": "list", "http": "GET", "path": "/business/transactions/index", "kind": "list", "doc": "List transactions."},
+        {"name": "retrieve", "http": "GET", "path": "/business/transaction/show/{transactionId}", "kind": "get", "doc": "Get a transaction."},
+        {"name": "byCurrency", "http": "GET", "path": "/business/transaction/by-currency", "kind": "list", "doc": "List transactions for a currency."},
+        {"name": "tracking", "http": "GET", "path": "/transaction/tracking/{quoteId}", "kind": "get", "doc": "Tracking steps for a transaction, by quote ID."},
+        {"name": "track", "http": "GET", "path": "/transaction/track", "kind": "query", "doc": "Track a transaction by ID (query parameters)."}
+      ]
+    },
+    {
+      "name": "virtualCards",
+      "doc": "Virtual cards for your customers.",
+      "methods": [
+        {"name": "activateCustomer", "http": "POST", "path": "/customer/virtual/cards/activate", "kind": "body", "doc": "Enable a customer for virtual cards."},
+        {"name": "create", "http": "POST", "path": "/customer/virtual/cards/create", "kind": "body", "doc": "Create a card."},
+        {"name": "list", "http": "GET", "path": "/customer/virtual/cards/list", "kind": "list", "doc": "List cards."},
+        {"name": "retrieve", "http": "GET", "path": "/customer/virtual/cards/get/{cardId}", "kind": "get", "doc": "Get a card."},
+        {"name": "topUp", "http": "POST", "path": "/customer/virtual/cards/topup", "kind": "body", "doc": "Top up a card from your USD wallet."},
+        {"name": "update", "http": "PUT", "path": "/customer/virtual/cards/update/{cardId}", "kind": "body", "doc": "Freeze or unfreeze a card."},
+        {"name": "transactions", "http": "GET", "path": "/customer/virtual/cards/transactions/{cardId}", "kind": "list", "doc": "A card's transactions."},
+        {"name": "withdraw", "http": "POST", "path": "/customer/virtual/cards/withdraw", "kind": "body", "doc": "Move money from a card to your USD wallet."},
+        {"name": "terminate", "http": "POST", "path": "/customer/virtual/cards/terminate", "kind": "body", "doc": "Terminate a card. The balance returns with the virtualcard.terminated.refund webhook."}
+      ]
+    },
+    {
+      "name": "crypto",
+      "doc": "Stablecoin deposit addresses.",
+      "methods": [
+        {"name": "createWallet", "http": "POST", "path": "/crypto/create-wallet", "kind": "body", "doc": "Create a deposit address, e.g. currency USDC_SOL. Store it: address requests are rate limited."},
+        {"name": "wallets", "http": "GET", "path": "/crypto/get-wallets", "kind": "query", "doc": "List your deposit addresses."},
+        {"name": "deposits", "http": "GET", "path": "/crypto/deposit-histories", "kind": "list", "doc": "List stablecoin deposits."},
+        {"name": "walletDeposits", "http": "GET", "path": "/crypto/wallet/deposit/histories/{walletAddress}", "kind": "list", "doc": "Deposits to one address."}
+      ]
+    },
+    {
+      "name": "corporateCards",
+      "doc": "Corporate cards for your business customers' employees (invitation only).",
+      "methods": [
+        {"name": "wallet", "http": "GET", "path": "/corporate-card/wallet", "kind": "query", "doc": "Funding address and balance."},
+        {"name": "listEmployees", "http": "GET", "path": "/corporate-card/employees", "kind": "list", "doc": "List employees."},
+        {"name": "createEmployee", "http": "POST", "path": "/corporate-card/employees", "kind": "body", "doc": "Create an employee."},
+        {"name": "retrieveEmployee", "http": "GET", "path": "/corporate-card/employees/{employeeId}", "kind": "get", "doc": "Get an employee."},
+        {"name": "updateEmployee", "http": "PUT", "path": "/corporate-card/employees/{employeeId}", "kind": "body", "doc": "Update an employee."},
+        {"name": "terminateEmployee", "http": "DELETE", "path": "/corporate-card/employees/{employeeId}", "kind": "delete", "doc": "Terminate an employee."},
+        {"name": "submitEmployeeKyc", "http": "POST", "path": "/corporate-card/employees/kyc", "kind": "body", "doc": "Submit employee KYC."},
+        {"name": "issueCard", "http": "POST", "path": "/corporate-card/employees/cards", "kind": "body", "doc": "Issue a card."},
+        {"name": "listCards", "http": "GET", "path": "/corporate-card/employees/cards", "kind": "list", "doc": "List cards."},
+        {"name": "retrieveCard", "http": "GET", "path": "/corporate-card/employees/cards/{cardId}", "kind": "get", "doc": "Get a card."},
+        {"name": "changeCardStatus", "http": "POST", "path": "/corporate-card/employees/cards/status", "kind": "body", "doc": "Activate, suspend or replace a card."},
+        {"name": "setCardLimits", "http": "PUT", "path": "/corporate-card/employees/cards/limits", "kind": "body", "doc": "Set a card's spend limits."},
+        {"name": "cardLink", "http": "GET", "path": "/corporate-card/employees/cards/{cardId}/link", "kind": "get", "doc": "Get the card's secure link."},
+        {"name": "fundEmployee", "http": "POST", "path": "/corporate-card/employees/balance", "kind": "body", "doc": "Fund an employee's balance."},
+        {"name": "employeeBalance", "http": "GET", "path": "/corporate-card/employees/{employeeId}/balance", "kind": "get", "doc": "An employee's balance."},
+        {"name": "listTransactions", "http": "GET", "path": "/business/spend-card/transactions", "kind": "list", "doc": "List card transactions."},
+        {"name": "retrieveTransaction", "http": "GET", "path": "/business/spend-card/transactions/{transactionId}", "kind": "get", "doc": "Get a card transaction."},
+        {"name": "disputeTransaction", "http": "POST", "path": "/business/spend-card/transactions/{transactionId}/dispute", "kind": "body", "doc": "Dispute a card transaction."}
+      ]
+    },
+    {
+      "name": "webhookEndpoints",
+      "doc": "Register the URL that receives your webhooks. One endpoint per account.",
+      "methods": [
+        {"name": "list", "http": "GET", "path": "/business/webhook", "kind": "query", "doc": "Your webhook endpoint."},
+        {"name": "create", "http": "POST", "path": "/business/webhook", "kind": "body", "doc": "Create or replace your endpoint (url). Returns a new secret: store it."},
+        {"name": "update", "http": "PUT", "path": "/business/webhook/{webhookId}", "kind": "body", "doc": "Change the URL. The secret stays the same."},
+        {"name": "delete", "http": "DELETE", "path": "/business/webhook/{webhookId}", "kind": "delete", "doc": "Delete your endpoint."},
+        {"name": "regenerateSecret", "http": "POST", "path": "/business/webhook/{webhookId}/regenerate-secret", "kind": "body", "doc": "Issue a new secret. The old one stops working at once."}
+      ]
+    },
+    {
+      "name": "events",
+      "doc": "Webhook delivery log.",
+      "methods": [
+        {"name": "list", "http": "GET", "path": "/business/events/all", "kind": "list", "doc": "List delivery attempts."},
+        {"name": "retrieve", "http": "GET", "path": "/business/events/show/{eventId}", "kind": "get", "doc": "Get one delivery attempt."},
+        {"name": "resend", "http": "POST", "path": "/business/events/resend/{eventId}", "kind": "body", "doc": "Resend an event to your current URL, signed with your current secret."}
+      ]
+    },
+    {
+      "name": "ipWhitelist",
+      "doc": "Check your API key setup.",
+      "methods": [
+        {"name": "check", "http": "GET", "path": "/ip-whitelist/check", "kind": "get", "doc": "Confirms the key works and whether this server's IP is allowed."}
+      ]
+    },
+    {
+      "name": "sandbox",
+      "doc": "Sandbox-only helpers.",
+      "methods": [
+        {"name": "simulateWebhook", "http": "POST", "path": "/demo/webhook/{eventType}", "kind": "body", "doc": "Send a sample signed event (payin, payout, customer, ...) to your registered URL. Sandbox only."}
+      ]
+    }
+  ]
+}
